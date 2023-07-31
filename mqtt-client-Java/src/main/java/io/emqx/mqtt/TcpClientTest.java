@@ -6,6 +6,9 @@ import java.nio.charset.StandardCharsets;
 
 //客户端
 public class TcpClientTest {
+
+    private final static int READ_COUNT = 1024;
+
     public static void main(String[] args) {
         Socket socket = null;
         OutputStream out = null;
@@ -32,18 +35,24 @@ public class TcpClientTest {
 
                 byte[] lenght = new byte[4];
                 int lenCount = is.read(lenght);
+                printLen(lenght);
 
-                int anInt = toInt(lenght, 0);
-                System.out.println("=======================================> type = " + type[0] + ", len = " + anInt);
+                int allCount = toInt(lenght, 0);
+                System.out.println(" type = " + type[0] + ", AllCount = " + allCount);
 
 
-                byte[] buff = new byte[10240];
+                byte[] buff = new byte[READ_COUNT];
                 int len, total = 0;
                 while ((len = is.read(buff)) != -1) {
                     total += len;
-                    System.out.println("anInt = " + total + ", total = " + total);
+                    System.out.println("allCount = " + allCount + ", total = " + total + ", len = " + len);
                     os.write(buff, 0, len);
-                    if(total >= anInt){
+
+                    if(allCount - total < READ_COUNT){
+                        len = is.read(buff, 0, allCount - total);
+                        total += len;
+                        System.out.println("allCount2222 = " + allCount + ", total = " + total + ", len = " + len);
+                        os.write(buff, 0, len);
                         break;
                     }
                 }
@@ -72,6 +81,14 @@ public class TcpClientTest {
                 }
             }
         }
+    }
+
+    private static void printLen(byte[] lenght) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : lenght) {
+            sb.append(b).append("-");
+        }
+        System.out.println("=======================================>" + sb);
     }
 
     public static int toInt(byte[] bytes, int offset) {

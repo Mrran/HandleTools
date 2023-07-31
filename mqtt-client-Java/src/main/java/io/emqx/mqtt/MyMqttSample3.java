@@ -1,6 +1,9 @@
 package io.emqx.mqtt;
 
-import org.eclipse.paho.client.mqttv3.*;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.io.BufferedReader;
@@ -10,7 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 
-public class MyMqttSample {
+public class MyMqttSample3 {
     public static void main(String[] args) {
         String broker = "tcp://127.0.0.1:8080";
         String clientId = MqttClient.generateClientId();
@@ -37,8 +40,9 @@ public class MyMqttSample {
 
         try {
             //获取assests文件夹下的内容
-            InputStreamReader in = new InputStreamReader(Files.newInputStream(Paths.get("D:\\work\\doc\\business\\SmartCar\\log\\2023-05-26-handle")), StandardCharsets.UTF_8);
-            //InputStreamReader in = new InputStreamReader(Files.newInputStream(Paths.get("D:\\work\\doc\\business\\SmartCar\\log\\test.txt")), StandardCharsets.UTF_8);
+//            InputStreamReader in = new InputStreamReader(Files.newInputStream(Paths.get("D:\\work\\doc\\business\\SmartCar\\log\\yuanshi.txt")), StandardCharsets.UTF_8);
+            InputStreamReader in = new InputStreamReader(Files.newInputStream(Paths.get("D:\\work\\doc\\business\\SmartCar\\log\\yuanshi.txt")), StandardCharsets.UTF_8);
+//            InputStreamReader in = new InputStreamReader(Files.newInputStream(Paths.get("D:\\work\\doc\\business\\SmartCar\\log\\yuanshi2.txt")), StandardCharsets.UTF_8);
             //读取文件的信息
             BufferedReader br = new BufferedReader(in);
             String line = "";
@@ -61,7 +65,7 @@ public class MyMqttSample {
                  * 5350 下个
                  */
 
-                if (count < 3750) {
+                if (count < 0) {
                     continue;
                 }
 
@@ -71,7 +75,7 @@ public class MyMqttSample {
 
                 System.out.println("count = " + count);
 
-                Thread.sleep(215);
+                Thread.sleep(100);
 
             }
             System.out.println("loop finished!!!");

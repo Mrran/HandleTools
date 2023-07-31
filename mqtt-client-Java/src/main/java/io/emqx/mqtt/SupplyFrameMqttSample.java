@@ -1,6 +1,9 @@
 package io.emqx.mqtt;
 
-import org.eclipse.paho.client.mqttv3.*;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.io.BufferedReader;
@@ -10,7 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 
-public class MyMqttSample {
+public class SupplyFrameMqttSample {
     public static void main(String[] args) {
         String broker = "tcp://127.0.0.1:8080";
         String clientId = MqttClient.generateClientId();
@@ -37,8 +40,7 @@ public class MyMqttSample {
 
         try {
             //获取assests文件夹下的内容
-            InputStreamReader in = new InputStreamReader(Files.newInputStream(Paths.get("D:\\work\\doc\\business\\SmartCar\\log\\2023-05-26-handle")), StandardCharsets.UTF_8);
-            //InputStreamReader in = new InputStreamReader(Files.newInputStream(Paths.get("D:\\work\\doc\\business\\SmartCar\\log\\test.txt")), StandardCharsets.UTF_8);
+             InputStreamReader in = new InputStreamReader(Files.newInputStream(Paths.get("D:\\work\\doc\\business\\SmartCar\\log\\frametest.txt")), StandardCharsets.UTF_8);
             //读取文件的信息
             BufferedReader br = new BufferedReader(in);
             String line = "";
@@ -52,26 +54,24 @@ public class MyMqttSample {
                 }
                 //line = "{\"msgType\":\"OBU\",\"data\":" + line + "}";
 
-                /**
-                 * 3750 国博
-                 * 400 alertType=37
-                 * 3780 alertType=46
-                 * 4630 alertType=s78
-                 * 4300 alertType=306
-                 * 5350 下个
-                 */
-
-                if (count < 3750) {
+                if (count < 0) {
                     continue;
                 }
 
                 MqttMessage message = new MqttMessage(line.getBytes());
                 message.setQos(0);
-                client.publish("/obu/RunningData", message);
+
+                /**********模拟红绿灯数据帧丢失*********/
+                if(count >= 11 && count <= 19){
+                    System.out.println("skip this frame!!!");
+                }else{
+                    client.publish("/obu/RunningData", message);
+                }
+
 
                 System.out.println("count = " + count);
 
-                Thread.sleep(215);
+                Thread.sleep(205);
 
             }
             System.out.println("loop finished!!!");

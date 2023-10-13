@@ -3,32 +3,42 @@ package io.emqx.mqtt;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 
 //客户端
 public class TcpClientTest {
 
     private final static int READ_COUNT = 1024;
 
+    private static int seq = 0;
+
+    private final static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss_SSS");
+
+
     public static void main(String[] args) {
         Socket socket = null;
         OutputStream out = null;
         try {
             //1.创建Socket对象，指明服务器IP和端口号
-            socket = new Socket("192.168.137.236", 9999);
+            //socket = new Socket("192.168.137.151", 9999);
+            socket = new Socket("192.168.28.147", 9999);
             //2.获取一个输出流用于输出数据
 
             out = socket.getOutputStream();
             //3.写出数据的操作(这里也可以用转换流OutputStreamWriter)
             out.write((byte) 0x01);
 
-            File pic = new File("C:\\Users\\ranfeng\\Desktop\\temp\\capture.jpg");
-            FileOutputStream os = new FileOutputStream(pic);
+
 
             InputStream is = socket.getInputStream();
 
             //Thread.sleep(100);
 
             while (true){
+                String format = formatter.format(System.currentTimeMillis());
+                File pic = new File("C:\\Users\\ranfeng\\Desktop\\temp\\pic5\\capture_" + format +".jpg");
+                FileOutputStream os = new FileOutputStream(pic);
+
                 byte[] type = new byte[1];
                 int typeCount = is.read(type);
                 //System.out.println("count = " + typeCount);
@@ -45,18 +55,30 @@ public class TcpClientTest {
                 int len, total = 0;
                 while ((len = is.read(buff)) != -1) {
                     total += len;
-                    System.out.println("allCount = " + allCount + ", total = " + total + ", len = " + len);
+                    //System.out.println("allCount = " + allCount + ", total = " + total + ", len = " + len);
                     os.write(buff, 0, len);
 
                     if(allCount - total < READ_COUNT){
-                        len = is.read(buff, 0, allCount - total);
-                        total += len;
-                        System.out.println("allCount2222 = " + allCount + ", total = " + total + ", len = " + len);
-                        os.write(buff, 0, len);
+                        while ((len = is.read(buff, 0, allCount - total)) != -1) {
+                            total += len;
+                            System.out.println("allCount2222 = " + allCount + ", total = " + total + ", len = " + len);
+                            os.write(buff, 0, len);
+
+                            if(total >= allCount){
+                                break;
+                            }
+
+                        }
                         break;
                     }
                 }
                 os.flush();
+                seq++;
+
+                if(seq >= 500){
+                    is.close();
+                    break;
+                }
             }
 
 //            if(total >= anInt){

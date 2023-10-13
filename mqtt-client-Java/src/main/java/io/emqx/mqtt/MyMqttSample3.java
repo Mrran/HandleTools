@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 
 
 public class MyMqttSample3 {
+
     public static void main(String[] args) {
         String broker = "tcp://127.0.0.1:8080";
         String clientId = MqttClient.generateClientId();
@@ -26,11 +27,14 @@ public class MyMqttSample3 {
             System.out.println("Connecting to broker: " + broker);
             client.connect(connOpts);
 
-            mockDataSend(client);
+            while (true){
+                mockDataSend(client);
+            }
 
-            client.disconnect();
-            client.close();
-            System.exit(0);
+
+//            client.disconnect();
+//            client.close();
+//            System.exit(0);
         } catch (MqttException me) {
             me.printStackTrace();
         }
@@ -40,8 +44,9 @@ public class MyMqttSample3 {
 
         try {
             //获取assests文件夹下的内容
-//            InputStreamReader in = new InputStreamReader(Files.newInputStream(Paths.get("D:\\work\\doc\\business\\SmartCar\\log\\yuanshi.txt")), StandardCharsets.UTF_8);
             InputStreamReader in = new InputStreamReader(Files.newInputStream(Paths.get("D:\\work\\doc\\business\\SmartCar\\log\\yuanshi.txt")), StandardCharsets.UTF_8);
+//            InputStreamReader in = new InputStreamReader(Files.newInputStream(Paths.get("D:\\work\\doc\\business\\SmartCar\\log\\yuanshi_no_speed.txt")), StandardCharsets.UTF_8);
+           // InputStreamReader in = new InputStreamReader(Files.newInputStream(Paths.get("D:\\work\\doc\\business\\SmartCar\\log\\mqtt830.log")), StandardCharsets.UTF_8);
 //            InputStreamReader in = new InputStreamReader(Files.newInputStream(Paths.get("D:\\work\\doc\\business\\SmartCar\\log\\yuanshi2.txt")), StandardCharsets.UTF_8);
             //读取文件的信息
             BufferedReader br = new BufferedReader(in);

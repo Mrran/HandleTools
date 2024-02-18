@@ -33,13 +33,7 @@ public class MapJsonCompare {
         for (Node nodeNew : nodeArrayNew) {
             for (Node nodeOld : nodeArrayOld) {
                 if (nodeNew.getName().equals(nodeOld.getName())) {
-//                    // 比较 node0 和 node1 的内容
-//                    if (!nodeNew.equals(nodeOld)) {
-//                        System.out.println("差异在节点: " + nodeNew.getName());
-//                        // 这里可以进一步打印出差异的具体内容
-//                    }
                     compareAndPrintDifferences(nodeNew, nodeOld);
-
                 }
             }
         }
@@ -65,9 +59,7 @@ public class MapJsonCompare {
                 if (field.getType().equals(List.class)) {
                     compareLists((List<?>) value1, (List<?>) value2, field.getName());
                 } else {
-                    if (!Objects.equals(value1, value2)) {
-                        System.out.println("Difference found in field '" + field.getName() + "': " + value1 + " != " + value2);
-                    }
+                    Objects.equals(value1, value2);
                 }
             } catch (IllegalAccessException e) {
                 e.printStackTrace();

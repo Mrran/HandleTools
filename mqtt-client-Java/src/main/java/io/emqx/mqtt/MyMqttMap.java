@@ -75,7 +75,7 @@ public class MyMqttMap {
 
             //String content = new String(Files.readAllBytes(Paths.get("D:\\work\\doc\\business\\rtty\\sqlite\\xingyun_map\\地图-2024-1-22\\800原188.json")), StandardCharsets.UTF_8);
 
-            String content = new String(Files.readAllBytes(Paths.get("D:\\work\\doc\\business\\rtty\\sqlite\\xingyun_map\\星云20240103\\2806原170.json")), StandardCharsets.UTF_8);
+            String content = new String(Files.readAllBytes(Paths.get("D:\\work\\doc\\business\\rtty\\sqlite\\xingyun_map\\20240221\\235-0221.json")), StandardCharsets.UTF_8);
 
             // 这里是处理文件内容的代码，比如发送 MQTT 消息
             // 例如，发送整个文件内容作为一个消息

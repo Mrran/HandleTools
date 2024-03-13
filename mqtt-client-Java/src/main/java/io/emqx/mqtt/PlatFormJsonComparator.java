@@ -1,10 +1,13 @@
 package io.emqx.mqtt;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+//import io.emqx.mqtt.bean.Lane;
+//import io.emqx.mqtt.bean.SpeedLimit;
 
 import java.io.*;
 import java.util.*;
@@ -23,8 +26,8 @@ public class PlatFormJsonComparator {
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
             // 读取两个 JSON 文件
-            JsonNode ja1 = mapper.readTree(new File("D:\\work\\doc\\business\\rtty\\sqlite\\export-json\\response.json"));
-            JsonNode ja2 = mapper.readTree(new File("D:\\work\\doc\\business\\rtty\\sqlite\\export-json\\lianchuang_20240218_0920.json"));
+            JsonNode ja1 = mapper.readTree(new File("D:\\work\\doc\\business\\rtty\\sqlite\\server\\map.json"));
+            JsonNode ja2 = mapper.readTree(new File("D:\\work\\doc\\business\\rtty\\sqlite\\server\\lc_all_20240313.json"));
 
             jsonToList1(ja1);
             jsonToList2(ja2);
@@ -61,7 +64,16 @@ public class PlatFormJsonComparator {
                     System.arraycopy(findNode.inLinks, 0, result, 0, findNode.inLinks.length);
                     System.arraycopy(node.inLinks, 0, result, findNode.inLinks.length, node.inLinks.length);
 
-                    findNode.inLinks = result;
+                    // 对result数组进行排序
+                    InLink[] sortedResult = Arrays.stream(result)
+                            .sorted((r1, r2) -> {
+                                int firstIndex1 = Integer.parseInt(r1.name.split("-")[0]);
+                                int firstIndex2 = Integer.parseInt(r2.name.split("-")[0]);
+                                return Integer.compare(firstIndex1, firstIndex2); // 注意此处的比较逻辑，可能需要根据实际需求调整
+                            })
+                            .toArray(InLink[]::new); // 将排序后的流转换回数组
+
+                    findNode.inLinks = sortedResult;
                 }
             }
 
@@ -75,6 +87,18 @@ public class PlatFormJsonComparator {
     private static void jsonToList2(JsonNode ja) {
         for (JsonNode obj : ja) {
             NodeBean node = convertJsonToBean(obj, NodeBean.class);
+
+            // 对result数组进行排序
+            InLink[] sortedResult = Arrays.stream(node.inLinks)
+                    .sorted((r1, r2) -> {
+                        int firstIndex1 = Integer.parseInt(r1.name.split("-")[0]);
+                        int firstIndex2 = Integer.parseInt(r2.name.split("-")[0]);
+                        return Integer.compare(firstIndex1, firstIndex2); // 注意此处的比较逻辑，可能需要根据实际需求调整
+                    })
+                    .toArray(InLink[]::new); // 将排序后的流转换回数组
+
+            node.inLinks = sortedResult;
+
 
             NodeBean findNode = null;
             for(int i=0; i<nodeList2.size(); i++){
@@ -117,8 +141,8 @@ public class PlatFormJsonComparator {
         // 比较两个 Java Bean 对象
         if (!bean1.equals(bean2)) {
             System.out.println("Objects are not equal:");
-            System.out.println("JSON 1: " + convertBeanToJson(bean1));
-            System.out.println("JSON 2: " + convertBeanToJson(bean2));
+            System.out.println(convertBeanToJson(bean1));
+            System.out.println(convertBeanToJson(bean2));
         }
     }
 
@@ -276,6 +300,8 @@ public class PlatFormJsonComparator {
     public static class RefPos {
         private int elevation;
         private int lat;
+
+        @JsonProperty("long")
         private int lon;
 
         public int getElevation() {
@@ -422,7 +448,7 @@ public class PlatFormJsonComparator {
                 return false;
             }
             InLink inLink = (InLink) o;
-            boolean equal = linkWidth == inLink.linkWidth && Objects.equals(name, inLink.name) && Objects.equals(upstreamNodeId, inLink.upstreamNodeId) && Arrays.equals(movements, inLink.movements) && Arrays.equals(speedLimits, inLink.speedLimits) && Arrays.equals(points, inLink.points) && Arrays.equals(lanes, inLink.lanes);
+            boolean equal = linkWidth == inLink.linkWidth && Objects.equals(name, inLink.name) && Objects.equals(upstreamNodeId, inLink.upstreamNodeId) /*&& Arrays.equals(movements, inLink.movements) /* &&  Arrays.equals(speedLimits, inLink.speedLimits) */ /*&& Arrays.equals(points, inLink.points)*/ && Arrays.equals(lanes, inLink.lanes);
 
             if(!equal){
                 System.out.println("InLink not equal, this = ");
@@ -435,8 +461,8 @@ public class PlatFormJsonComparator {
         public int hashCode() {
             int result = Objects.hash(name, upstreamNodeId, linkWidth);
             result = 31 * result + Arrays.hashCode(movements);
-            result = 31 * result + Arrays.hashCode(speedLimits);
-            result = 31 * result + Arrays.hashCode(points);
+            //result = 31 * result + Arrays.hashCode(speedLimits);
+            //result = 31 * result + Arrays.hashCode(points);
             result = 31 * result + Arrays.hashCode(lanes);
             return result;
         }
@@ -747,6 +773,8 @@ public class PlatFormJsonComparator {
     }
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class OffsetLL {
+
+        @JsonProperty("position-LatLon")
         private PositionLatLon positionLatLon;
 
         public PositionLatLon getPositionLatLon() {
@@ -790,6 +818,7 @@ public class PlatFormJsonComparator {
     }
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class PositionLatLon {
+
         private int lon;
         private int lat;
 
@@ -964,9 +993,9 @@ public class PlatFormJsonComparator {
             }
             Lane lane = (Lane) o;
 
-            boolean equal = laneID == lane.laneID && laneWidth == lane.laneWidth && Arrays.equals(connectsTo, lane.connectsTo) && Arrays.equals(speedLimits, lane.speedLimits)
+            boolean equal = laneID == lane.laneID /*&& laneWidth == lane.laneWidth*/ && Arrays.equals(connectsTo, lane.connectsTo) /*&& Arrays.equals(speedLimits, lane.speedLimits)*/
                     && (Objects.equals(maneuvers, lane.maneuvers) || (maneuvers.equals("") && lane.maneuvers.equals("0000")) || (maneuvers.equals("0000") && lane.maneuvers.equals("")))
-                    && Arrays.equals(points, lane.points);
+                    /* && Arrays.equals(points, lane.points) */;
             if(!equal){
                 System.out.println("Lane not equal, this = ");
             }
@@ -976,10 +1005,10 @@ public class PlatFormJsonComparator {
 
         @Override
         public int hashCode() {
-            int result = Objects.hash(laneID, laneWidth, maneuvers);
+            int result = Objects.hash(laneID);
             result = 31 * result + Arrays.hashCode(connectsTo);
-            result = 31 * result + Arrays.hashCode(speedLimits);
-            result = 31 * result + Arrays.hashCode(points);
+            //result = 31 * result + Arrays.hashCode(speedLimits);
+            //result = 31 * result + Arrays.hashCode(points);
             return result;
         }
     }

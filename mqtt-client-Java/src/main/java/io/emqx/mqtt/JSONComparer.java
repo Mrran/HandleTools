@@ -17,18 +17,18 @@ public class JSONComparer {
             //List<JSONStructure> json1 = mapper.readValue(new File("D:\\work\\doc\\business\\rtty\\sqlite\\export-json\\test.json"), new TypeReference<List<JSONStructure>>() {});
             //List<JSONStructure> json2 = mapper.readValue(new File("D:\\work\\doc\\business\\rtty\\sqlite\\export-json\\test2.json"), new TypeReference<List<JSONStructure>>() {});
 
-            List<JSONStructure> json1 = mapper.readValue(new File("D:\\work\\doc\\business\\rtty\\sqlite\\export-json\\upload\\lianchuang_20231226_1430.json"), new TypeReference<List<JSONStructure>>() {});
-            List<JSONStructure> json2 = mapper.readValue(new File("D:\\work\\doc\\business\\rtty\\sqlite\\export-json\\lianchuang_20240124_0926.json"), new TypeReference<List<JSONStructure>>() {});
+            List<Node> jsonList1 = mapper.readValue(new File("D:\\work\\doc\\business\\rtty\\sqlite\\export-json\\upload\\lianchuang_20231226_1430.json"), new TypeReference<List<Node>>() {});
+            List<Node> jsonList2 = mapper.readValue(new File("D:\\work\\doc\\business\\rtty\\sqlite\\export-json\\lianchuang_20240124_0926.json"), new TypeReference<List<Node>>() {});
 
-            compareJSON(json1, json2);
+            compareJSON(jsonList1, jsonList2);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static void compareJSON(List<JSONStructure> json1, List<JSONStructure> json2) {
-        for (JSONStructure item1 : json1) {
-            for (JSONStructure item2 : json2) {
+    private static void compareJSON(List<Node> jsonList1, List<Node> jsonList2) {
+        for (Node item1 : jsonList1) {
+            for (Node item2 : jsonList2) {
                 if (item1.name.equals(item2.name)) {
                     compareInLinks(item1.inLinks, item2.inLinks);
                 }
@@ -46,16 +46,14 @@ public class JSONComparer {
         }
     }
 
-    static class JSONStructure {
+    static class Node {
         public String name;
         public List<InLink> inLinks;
-        // ... 其他字段
     }
 
     static class InLink {
         public String name;
         public List<Movement> movements;
-        // ... 其他字段
     }
 
     static class Movement {

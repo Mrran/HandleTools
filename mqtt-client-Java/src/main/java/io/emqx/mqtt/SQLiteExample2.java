@@ -2,7 +2,7 @@ package io.emqx.mqtt;
 
 import java.sql.*;
 
-public class SQLiteExample {
+public class SQLiteExample2 {
     public static void main(String[] args) {
         // SQLite数据库连接字符串，确保指向正确的数据库文件
         String dbURL = "jdbc:sqlite:D:\\work\\doc\\business\\rtty\\V2X-MapMark-master\\V2X-MapMark-master\\MapMark\\MapCollect.db";

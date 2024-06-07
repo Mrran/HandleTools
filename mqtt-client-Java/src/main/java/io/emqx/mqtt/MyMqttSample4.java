@@ -183,6 +183,8 @@ public class MyMqttSample4 {
                     line = "{\"id\":\"20041021\",\"sn\":\"2021541\",\"supplier\":\"中国汽研\",\"model\":\"ICTC-V855\",\"mfd\":\"2021-5-1\",\"swVer\":\"3.1.1\",\"hwVer\":\"1.0.0\",\"protocolStack\":\"Day1\",\"uptime\":\"10:28:13 up 11:52\"}";
                 }else if(mockData == 401){   // RTK信息
                     line = "{\"state\":5,\"rtcm\":\"rtk.i-vista.org:2102\",\"expiration\":\"2024-12-30\"}";
+                }else if(mockData == 402){   // RTK信息
+                    line = "{\"state\":4,\"rtcm\":\"rtk.i-vista.org:2102\",\"expiration\":\"2024-12-30\"}";
                 }
 
                 /**

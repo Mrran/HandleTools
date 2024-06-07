@@ -42,7 +42,7 @@ public class V2XMapSyncTool {
             if (conn != null) {
 
                 // 第二个数据库的文件路径，需要附加到主数据库
-                String secondDbPath = "D:\\work\\doc\\business\\rtty\\V2X-MapMark-master\\杨修正后的地图\\20240524\\MapCollect_new2(12).db";
+                String secondDbPath = "D:\\work\\doc\\business\\rtty\\V2X-MapMark-master\\V2X-MapMark-master\\MapMark\\bin\\LandCollectTool_20240606_prod\\MapCollect_new2.db";
 
                      Statement stmt = conn.createStatement();
 
